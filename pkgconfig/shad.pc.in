@@ -1,12 +1,11 @@
 prefix=@CMAKE_INSTALL_PREFIX@
 exec_prefix=${prefix}
 includedir=${prefix}/include
-libdir=${exec_prefix}/lib
+libdir=${prefix}/lib
 
-Name: @CMAKE_PROJECT_NAME@
-Description: SHAD - Scalable and High-Performance Algorithms and Data-Structures.
-Version: @PACKAGE_VERSION@
-Cflags: @CMAKE_CXX_FLAGS@ -D HAVE_@SHAD_RUNTIME_SYSTEM@=1 -I${includedir}
-Libs: -L${libdir} -Wl,-rpath,${libdir} -lruntime -lutil @RUNTIME_LIBRARIES@  @LINK_FLAGS@
+Name: shad
+Description: SHAD - Scalable and High-Performance Algorithms and Data-Structures
+Version: @PROJECT_VERSION@
 
-Requires: @PKG_REQUIRES@
+Cflags: -I${includedir}
+Libs: -L${libdir} -l:libruntime.a @MPI_CXX_LINK_FLAGS@ -lmpi

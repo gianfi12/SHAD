@@ -39,9 +39,9 @@ foreach(rp ${runtime_prefixes})
     target_link_libraries(${rp}_runtime PUBLIC ${GPERFTOOLS_LIBRARIES})
   endif()
   string(TOUPPER "${rp}" uprp)
-  
+
   target_include_directories(${rp}_runtime
-                             PUBLIC 
+                             PUBLIC
                              ${${uprp}_INCLUDE_DIRS}
                              $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
                              $<INSTALL_INTERFACE:include>)
@@ -53,6 +53,28 @@ foreach(rp ${runtime_prefixes})
   install(EXPORT ${rp}_runtime_export
           FILE shad_${rp}_runtime_export.cmake
           DESTINATION cmake)
+
+  if("${rp}" STREQUAL "gmt")
+    set(PKG_REQUIRES "gmt")
+  endif()
+  set(RUNTIME_SYSTEM ${rp})
+  configure_file(
+    ${SHAD_MAIN_SRC_DIR}/pkgconfig/shad-runtime.pc.in
+    ${SHAD_BINARY_DIR}/pkgconfig/shad-runtime-${rp}.pc
+    @ONLY
+  )
+  install(FILES ${SHAD_BINARY_DIR}/pkgconfig/shad-runtime-${rp}.pc
+        DESTINATION "pkgconfig")
+
+  configure_file(
+  ${SHAD_MAIN_SRC_DIR}/pkgconfig/shad-backend.pc.in
+  ${SHAD_BINARY_DIR}/pkgconfig/shad-${rp}.pc
+  @ONLY
+)
+  install(FILES ${SHAD_BINARY_DIR}/pkgconfig/shad-${rp}.pc
+        DESTINATION "pkgconfig")
+
+
 endforeach(rp)
 
 

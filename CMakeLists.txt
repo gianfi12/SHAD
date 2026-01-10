@@ -1,6 +1,7 @@
 # See README.md for instruction on how to build SHAD with CMake
 
 cmake_minimum_required(VERSION 3.1)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 if (NOT DEFINED SHAD_VERSION_MAJOR)
   set(SHAD_VERSION_MAJOR 0)
@@ -113,28 +114,23 @@ configure_file(
   ${SHAD_MAIN_INCLUDE_DIR}/shad/config/test-config.h.in
   ${SHAD_INCLUDE_DIR}/shad/config/test-config.h)
 
-set(RUNTIME_PKGS "")
-# set(RUNTIME_LIBRARIES "cpp_simple")
 if (SHAD_RUNTIME_SYSTEM STREQUAL "GMT")
   set(RUNTIME_PKGS ${RUNTIME_PKGS} "gmt")
+  # TODO should be use everytime given the MPI dependencies for collective operations
   find_package(MPI REQUIRED)
   include_directories(${MPI_INCLUDE_PATH})
-endif()
-if (SHAD_RUNTIME_SYSTEM STREQUAL "TBB")
-  set(RUNTIME_PKGS ${RUNTIME_PKGS} "tbb")
 endif()
 
 include_directories(${SHAD_MAIN_INCLUDE_DIR} ${SHAD_INCLUDE_DIR})
 
-string(REPLACE ";" " " PKG_REQUIRES "${RUNTIME_PKGS}")
-set(RUNTIME_LIBRARIES "-lcpp_simple_runtime")
-foreach(dep IN LISTS RUNTIME_PKGS)
-  string(APPEND RUNTIME_LIBRARIES " -l${dep}_runtime")
-endforeach()
 configure_file(
   ${SHAD_MAIN_SRC_DIR}/pkgconfig/shad.pc.in
-  ${SHAD_BINARY_DIR}/pkgconfig/shad.pc @ONLY)
-install(FILES ${SHAD_BINARY_DIR}/pkgconfig/shad.pc DESTINATION pkgconfig)
+  ${SHAD_BINARY_DIR}/pkgconfig/shad.pc
+  @ONLY
+)
+install(FILES ${SHAD_BINARY_DIR}/pkgconfig/shad.pc
+        DESTINATION "pkgconfig")
+
 install(FILES ${SHAD_MAIN_SRC_DIR}/cmake/FindSHAD.cmake DESTINATION cmake)
 
 # Test commands
