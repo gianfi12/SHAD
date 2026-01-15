@@ -6,6 +6,3 @@ Cflags: -DHAVE_@SHAD_RUNTIME_SYSTEM@=1
 
 # The runtime libs this backend provides
 Libs: -l:lib@RUNTIME_SYSTEM@_runtime.a
-
-Requires: @PKG_REQUIRES@
-

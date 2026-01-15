@@ -125,12 +125,14 @@ size_t sssp_length(typename GraphT::ObjectID gid, VertexT src, VertexT dest) {
   auto q1Ptr = shad::Set<VertexT>::Create(num_vertices / 2);
   auto visited = shad::Array<bool>::Create(num_vertices, false);
   auto found = shad::Array<bool>::Create(1, false);
-  return __sssp_length<GraphT, VertexT>(gid, num_vertices, q0Ptr, q1Ptr,
-                                        visited, found, src, dest);
+
   shad::Set<VertexT>::Destroy(q0Ptr->GetGlobalID());
   shad::Set<VertexT>::Destroy(q1Ptr->GetGlobalID());
   shad::Array<bool>::Destroy(visited->GetGlobalID());
   shad::Array<bool>::Destroy(found->GetGlobalID());
+
+  return __sssp_length<GraphT, VertexT>(gid, num_vertices, q0Ptr, q1Ptr,
+                                        visited, found, src, dest);
 }
 
 #endif  // INCLUDE_SHAD_EXTENSIONS_GRAPH_LIBRARY_ALGORITHMS_SSSP_H_

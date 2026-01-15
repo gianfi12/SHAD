@@ -1,5 +1,6 @@
 Name: shad-@RUNTIME_SYSTEM@
 Description: SHAD + @RUNTIME_SYSTEM@ runtime
 Version: @PROJECT_VERSION@
-Requires: shad-runtime-@RUNTIME_SYSTEM@ shad
+
+Requires: @PKG_REQUIRES@ shad-runtime-@RUNTIME_SYSTEM@ shad
 

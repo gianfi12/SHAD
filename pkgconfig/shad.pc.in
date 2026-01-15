@@ -8,4 +8,4 @@ Description: SHAD - Scalable and High-Performance Algorithms and Data-Structures
 Version: @PROJECT_VERSION@
 
 Cflags: -I${includedir}
-Libs: -L${libdir} -l:libruntime.a @MPI_CXX_LINK_FLAGS@ -lmpi
+Libs: -L${libdir} @MPI_CXX_LINK_FLAGS@ -lmpi

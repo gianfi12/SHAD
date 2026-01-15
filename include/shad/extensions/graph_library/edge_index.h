@@ -237,7 +237,7 @@ class EdgeIndex
   /// @param function The function to apply.
   /// @param args The function arguments.
   template <typename ApplyFunT, typename... Args>
-  void ForEachNeighbor(const SrcT &src, ApplyFunT &&function, Args &... args);
+  void ForEachNeighbor(const SrcT &src, ApplyFunT &&function, Args &...args);
 
   /// @brief Asynchronously apply a user-defined function
   /// to each neighbor of a given vertex.
@@ -258,7 +258,7 @@ class EdgeIndex
   /// @param args The function arguments.
   template <typename ApplyFunT, typename... Args>
   void AsyncForEachNeighbor(rt::Handle &handle, const SrcT &src,
-                            ApplyFunT &&function, Args &... args);
+                            ApplyFunT &&function, Args &...args);
 
   /// @brief Apply a user-defined function to each vertex.
   ///
@@ -272,7 +272,7 @@ class EdgeIndex
   /// @param function The function to apply.
   /// @param args The function arguments.
   template <typename ApplyFunT, typename... Args>
-  void ForEachVertex(ApplyFunT &&function, Args &... args);
+  void ForEachVertex(ApplyFunT &&function, Args &...args);
 
   /// @brief Apply a user-defined function to each vertex.
   ///
@@ -291,7 +291,7 @@ class EdgeIndex
   /// @param args The function arguments.
   template <typename ApplyFunT, typename... Args>
   void AsyncForEachVertex(rt::Handle &handle, ApplyFunT &&function,
-                          Args &... args);
+                          Args &...args);
 
   /// @brief Apply a user-defined function to each edge.
   ///
@@ -305,7 +305,7 @@ class EdgeIndex
   /// @param function The function to apply.
   /// @param args The function arguments.
   template <typename ApplyFunT, typename... Args>
-  void ForEachEdge(ApplyFunT &&function, Args &... args);
+  void ForEachEdge(ApplyFunT &&function, Args &...args);
 
   /// @brief Asynchronously apply a user-defined function
   /// to each edge.
@@ -325,7 +325,7 @@ class EdgeIndex
   /// @param args The function arguments.
   template <typename ApplyFunT, typename... Args>
   void AsyncForEachEdge(rt::Handle &handle, ApplyFunT &&function,
-                        Args &... args);
+                        Args &...args);
 
   // FIXME for testing purposes only
   LocalEdgeIndex<SrcT, DestT, StorageT> *GetLocalIndexPtr() {
@@ -354,7 +354,7 @@ class EdgeIndex
   /// @param args The function arguments.
   template <typename ApplyFunT, typename... Args>
   void VertexAttributesApply(const SrcT &src, ApplyFunT &&function,
-                             Args &... args);
+                             Args &...args);
 
  private:
   ObjectID oid_;
@@ -677,7 +677,7 @@ inline void EdgeIndex<SrcT, DestT, StorageT>::BufferedAsyncInsert(
 template <typename SrcT, typename DestT, typename StorageT>
 template <typename ApplyFunT, typename... Args>
 void EdgeIndex<SrcT, DestT, StorageT>::ForEachVertex(ApplyFunT &&function,
-                                                     Args &... args) {
+                                                     Args &...args) {
   using FunctionTy = void (*)(const SrcT &src, Args &...);
   FunctionTy fn = std::forward<decltype(function)>(function);
   using feArgs = std::tuple<ObjectID, FunctionTy, std::tuple<Args...>>;
@@ -696,8 +696,8 @@ template <typename SrcT, typename DestT, typename StorageT>
 template <typename ApplyFunT, typename... Args>
 void EdgeIndex<SrcT, DestT, StorageT>::AsyncForEachVertex(rt::Handle &handle,
                                                           ApplyFunT &&function,
-                                                          Args &... args) {
-  using FunctionTy = void (*)(rt::Handle & h, const SrcT &src, Args &...);
+                                                          Args &...args) {
+  using FunctionTy = void (*)(rt::Handle &h, const SrcT &src, Args &...);
   FunctionTy fn = std::forward<decltype(function)>(function);
   using feArgs = std::tuple<ObjectID, FunctionTy, std::tuple<Args...>>;
   feArgs arguments(oid_, fn, std::tuple<Args...>(args...));
@@ -716,7 +716,7 @@ template <typename SrcT, typename DestT, typename StorageT>
 template <typename ApplyFunT, typename... Args>
 void EdgeIndex<SrcT, DestT, StorageT>::ForEachNeighbor(const SrcT &src,
                                                        ApplyFunT &&function,
-                                                       Args &... args) {
+                                                       Args &...args) {
   size_t targetId = shad::hash<SrcT>{}(src) % rt::numLocalities();
   rt::Locality targetLocality(targetId);
   if (targetLocality == rt::thisLocality()) {
@@ -741,14 +741,14 @@ void EdgeIndex<SrcT, DestT, StorageT>::ForEachNeighbor(const SrcT &src,
 template <typename SrcT, typename DestT, typename StorageT>
 template <typename ApplyFunT, typename... Args>
 void EdgeIndex<SrcT, DestT, StorageT>::AsyncForEachNeighbor(
-    rt::Handle &handle, const SrcT &src, ApplyFunT &&function, Args &... args) {
+    rt::Handle &handle, const SrcT &src, ApplyFunT &&function, Args &...args) {
   size_t targetId = shad::hash<SrcT>{}(src) % rt::numLocalities();
   rt::Locality targetLocality(targetId);
   if (targetLocality == rt::thisLocality()) {
     localIndex_.AsyncForEachNeighbor(handle, src, function, args...);
     return;
   }
-  using FunctionTy = void (*)(rt::Handle & handle, const SrcT &src,
+  using FunctionTy = void (*)(rt::Handle &handle, const SrcT &src,
                               const DestT &dest, Args &...);
   FunctionTy fn = std::forward<decltype(function)>(function);
   using feArgs = std::tuple<ObjectID, SrcT, FunctionTy, std::tuple<Args...>>;
@@ -767,7 +767,7 @@ void EdgeIndex<SrcT, DestT, StorageT>::AsyncForEachNeighbor(
 template <typename SrcT, typename DestT, typename StorageT>
 template <typename ApplyFunT, typename... Args>
 void EdgeIndex<SrcT, DestT, StorageT>::ForEachEdge(ApplyFunT &&function,
-                                                   Args &... args) {
+                                                   Args &...args) {
   using FunctionTy = void (*)(const SrcT &src, const DestT &dest, Args &...);
   FunctionTy fn = std::forward<decltype(function)>(function);
   using feArgs = std::tuple<ObjectID, FunctionTy, std::tuple<Args...>>;
@@ -786,8 +786,8 @@ template <typename SrcT, typename DestT, typename StorageT>
 template <typename ApplyFunT, typename... Args>
 void EdgeIndex<SrcT, DestT, StorageT>::AsyncForEachEdge(rt::Handle &handle,
                                                         ApplyFunT &&function,
-                                                        Args &... args) {
-  using FunctionTy = void (*)(rt::Handle & handle, const SrcT &src,
+                                                        Args &...args) {
+  using FunctionTy = void (*)(rt::Handle &handle, const SrcT &src,
                               const DestT &dest, Args &...);
   FunctionTy fn = std::forward<decltype(function)>(function);
   using feArgs = std::tuple<ObjectID, FunctionTy, std::tuple<Args...>>;
@@ -830,7 +830,7 @@ bool EdgeIndex<SrcT, DestT, StorageT>::GetVertexAttributes(
 template <typename SrcT, typename DestT, typename StorageT>
 template <typename ApplyFunT, typename... Args>
 void EdgeIndex<SrcT, DestT, StorageT>::VertexAttributesApply(
-    const SrcT &src, ApplyFunT &&function, Args &... args) {
+    const SrcT &src, ApplyFunT &&function, Args &...args) {
   size_t targetId = shad::hash<SrcT>{}(src) % rt::numLocalities();
   rt::Locality targetLocality(targetId);
 
