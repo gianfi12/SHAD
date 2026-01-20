@@ -53,6 +53,13 @@ pkg_check_modules(hwloc REQUIRED IMPORTED_TARGET hwloc)
 link_libraries(PkgConfig::hwloc)
 #################
 
+# Optional LIKWID flags for pkg-config
+set(SHAD_LIKWID_LIBS "")
+find_package(likwid CONFIG QUIET)
+if (TARGET likwid::likwid)
+  set(SHAD_LIKWID_LIBS "-llikwid")
+endif()
+
 if (NOT CMAKE_BUILD_TYPE AND NOT CMAKE_CONFIGURATION_TYPES)
   message(STATUS "No build type selected, default to Debug")
   set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Build type (default Debug)" FORCE)

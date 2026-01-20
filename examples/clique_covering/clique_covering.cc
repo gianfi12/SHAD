@@ -30,7 +30,9 @@
 #include <sstream>
 #include <utility>
 
+#ifdef LIKWID_PERFMON
 #include <likwid.h>
+#endif
 #include "shad/core/algorithm.h"
 #include "shad/data_structures/array.h"
 #include "shad/extensions/graph_library/algorithms/jp_coloring.h"
@@ -79,11 +81,10 @@ void printHelp(const std::string programName) {
 namespace shad {
 
 int main(int argc, char **argv) {
-  if (argc != 2) {
-    printHelp(argv[0]);
-    return -1;
-  }
-
+//  if (argc != 2) {
+//    printHelp(argv[0]);
+//    return -1;
+//  }
   graph_t::ObjectID OID(-1);
   auto loadingTime = shad::measure<std::chrono::seconds>::duration([&]() {
     // The GraphReader expects an input file in METIS dump format
@@ -99,11 +100,15 @@ int main(int argc, char **argv) {
   std::cout << "NumVertices: " << num_vertices
             << " Num Edges: " << eiPtr->NumEdges() << std::endl;
   shad::Array<int32_t>::SharedPtr result;
-  LIKWID_MARKER_REGISTER("foo");
-  LIKWID_MARKER_START("foo");
+#ifdef LIKWID_PERFMON
+  LIKWID_MARKER_REGISTER("coloring");
+  LIKWID_MARKER_START("coloring");
+#endif
   auto duration = shad::measure<std::chrono::seconds>::duration(
       [&]() { result = jp_coloring<graph_t, size_t>(OID, num_vertices); });
-  LIKWID_MARKER_STOP("foo");
+#ifdef LIKWID_PERFMON
+  LIKWID_MARKER_STOP("coloring");
+#endif
   if (shad::rt::thisLocality() == shad::rt::Locality(0)) {
     for (auto i = 0; i < num_vertices; ++i) {
       std::cout << i << " " << result->At(i) << "\n";

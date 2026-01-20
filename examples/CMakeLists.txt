@@ -1,3 +1,12 @@
+find_package(likwid CONFIG QUIET)
+set(SHAD_EXAMPLES_LIKWID_TARGET "")
+if (TARGET likwid::likwid)
+  set(SHAD_EXAMPLES_LIKWID_TARGET likwid::likwid)
+  set(SHAD_EXAMPLES_LIKWID_DEFS LIKWID_PERFMON)
+else()
+  message(STATUS "LIKWID not found; examples will build without LIKWID")
+endif()
+
 add_subdirectory(array)
 add_subdirectory(edge_index_graph)
 add_subdirectory(clique_covering)

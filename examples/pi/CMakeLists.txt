@@ -1,2 +1,6 @@
 add_executable(pi pi.cc)
 target_link_libraries(pi ${SHAD_RUNTIME_LIB} runtime)
+if (SHAD_EXAMPLES_LIKWID_TARGET)
+  target_compile_definitions(pi PRIVATE ${SHAD_EXAMPLES_LIKWID_DEFS})
+  target_link_libraries(pi PRIVATE ${SHAD_EXAMPLES_LIKWID_TARGET})
+endif()

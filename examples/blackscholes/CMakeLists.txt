@@ -1,2 +1,6 @@
 add_executable(blackscholes blackscholes.cc)
 target_link_libraries(blackscholes ${SHAD_RUNTIME_LIB} runtime)
+if (SHAD_EXAMPLES_LIKWID_TARGET)
+  target_compile_definitions(blackscholes PRIVATE ${SHAD_EXAMPLES_LIKWID_DEFS})
+  target_link_libraries(blackscholes PRIVATE ${SHAD_EXAMPLES_LIKWID_TARGET})
+endif()

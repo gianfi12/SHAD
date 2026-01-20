@@ -1,13 +1,11 @@
 set(program
 clique_covering)
 
-
 foreach(p ${program})
   add_executable(${p} ${p}.cc)
-  # Add debug symbols only for Debug and RelWithDebInfo configs:
-  # target_compile_options(${p} PRIVATE
-  #   $<$<CONFIG:Debug>:-g>
-  #   $<$<CONFIG:RelWithDebInfo>:-g>
-  # )
-  target_link_libraries(${p} ${SHAD_RUNTIME_LIB} runtime)
+  target_link_libraries(${p} PRIVATE gmt_runtime ${SHAD_RUNTIME_LIB} runtime)
+  if (SHAD_EXAMPLES_LIKWID_TARGET)
+    target_compile_definitions(${p} PRIVATE ${SHAD_EXAMPLES_LIKWID_DEFS})
+    target_link_libraries(${p} PRIVATE ${SHAD_EXAMPLES_LIKWID_TARGET})
+  endif()
 endforeach(p)

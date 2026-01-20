@@ -53,7 +53,6 @@ foreach(rp ${runtime_prefixes})
   install(EXPORT ${rp}_runtime_export
           FILE shad_${rp}_runtime_export.cmake
           DESTINATION cmake)
-
   if("${rp}" STREQUAL "gmt")
     set(PKG_REQUIRES "gmt")
   endif()
